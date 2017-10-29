@@ -61,7 +61,87 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
 
     @Override
     public boolean remove(Object o) {
-        throw new UnsupportedOperationException();
+        Node<T> current = root;              // начинаем с корня
+
+        @SuppressWarnings("unchecked")
+        T removableValue = (T) o;
+
+        if (current.value == o){      //если удаляем вершину
+           if (current.right.left == null){
+               current.right.left = current.left;
+               root = current.right;
+           }
+
+        }
+        else {
+            while ((current.value.compareTo(removableValue) > 0 && current.left != null && current.left.value != removableValue) ||
+                    (current.value.compareTo(removableValue) < 0 && current.right != null && current.right.value != removableValue)) {
+                if (current.value.compareTo(removableValue) > 0 && current.left != null && current.left.value != o)
+                    current = current.left;
+                else if (current.value.compareTo(removableValue) < 0 && current.right != null && current.right.value != o)
+                    current = current.right;
+                else throw new NoSuchElementException();
+            }
+
+
+            // обозначаем удаляемую вершину
+            Node<T> removableNode;
+            if (current.left != null && current.left.value == o) removableNode = current.left;
+            else if (current.right != null && current.right.value == o) removableNode = current.right;
+            else throw new NoSuchElementException();
+
+            if (removableNode.right == null && removableNode.left == null) {             //if removable has 0 son
+                current.left = (current.left == removableNode) ? null : current.left;
+                current.right = (current.right == removableNode) ? null : current.right;
+            }
+
+            if ((removableNode.left != null && removableNode.right == null) || (removableNode.left == null && removableNode.right != null)) {    //if removable has one son
+                current.left = (current.left == removableNode && removableNode.left != null) ? removableNode.left : current.left;       //if left son and left gSon
+                current.left = (current.left == removableNode && removableNode.right != null) ? removableNode.right : current.left;     // if left son and right gSon
+                current.right = (current.right == removableNode && removableNode.left != null) ? removableNode.left : current.right;   //if right son and left gSon
+                current.right = (current.right == removableNode && removableNode.right != null) ? removableNode.right : current.right;  //if right son and right gSon
+            }
+
+            if (removableNode.left != null && removableNode.right != null) {
+                Node<T> premin = findPremin(removableNode);
+                surrogateRemovable(current, removableNode, premin);
+
+            }
+        }
+
+        size --;
+        return true;
+    }
+
+
+    private Node<T> findPremin(Node<T> removable){
+        Node<T> premin = null;
+
+        if (removable.right.left != null){
+            premin = removable.right;
+            while(premin.left.left != null) premin = premin.left;
+        }
+
+        return premin;
+    }
+
+    private void surrogateRemovable(Node<T> current, Node<T> removable, Node<T> premin){
+
+        if (premin == null) {
+            removable.right.left = removable.left;
+            current.left = current.left == removable? removable.right : current.left;
+            current.right = current.right == removable ? removable.right : current.right;
+        }
+        else {
+            Node<T> min = premin.left;
+
+            min.left = removable.left;
+            min.right = removable.right;
+            current.left = current.left == removable ? min : current.left;
+            current.right = current.right == removable ? min : current.right;
+            premin.left = null;
+        }
+
     }
 
     @Override
@@ -92,6 +172,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         }
     }
 
+
     public class BinaryTreeIterator implements Iterator<T> {
 
         private Node<T> current = null;
@@ -99,7 +180,11 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         private BinaryTreeIterator() {}
 
         private Node<T> findNext() {
-            throw new UnsupportedOperationException();
+            if (current.right != null){
+                return findMin(current);
+            }
+            else if (current.value.compareTo(findFather(current).value) < 0) return findFather(current);
+            return null;
         }
 
         @Override
@@ -116,8 +201,24 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException();
+            BinaryTree.this.remove(current.value);
         }
+    }
+
+    private Node<T> findMin(Node<T> current){
+        current = current.right;
+        while(current.left != null) current = current.left;
+        return current;
+    }
+
+
+    private Node<T> findFather(Node<T> son){
+        Node<T> current = root;
+
+        if (current.value.compareTo(son.value) > 0 && current.left.value != son.value) current = current.left;
+        else if (current.value.compareTo(son.value) < 0 && current.right.value != son.value) current = current.right;
+
+        return current;
     }
 
     @NotNull
