@@ -66,7 +66,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         @SuppressWarnings("unchecked")
         T removableValue = (T) o;
 
-        if (current.value == o){      //если удаляем вершину
+        if (current.value == o){       //если удаляем вершину
            if (current.left == null && current.right == null) root = null;
            else if (current.right == null) root = current.left;
            else if (current.left == null) root = current.right;

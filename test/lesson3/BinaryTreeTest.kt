@@ -103,7 +103,7 @@ class BinaryTreeTest {
         tree.add(19)
         tree.add(17)
         tree.add(18)
-        tree.remove(10)                 // случай, когда у min есть правый ребёнок
+        tree.remove(10)                  // случай, когда у min есть правый ребёнок
         assertTrue(tree.checkInvariant())
         assertFalse(tree.contains(10))
         assertEquals(5,tree.size)
