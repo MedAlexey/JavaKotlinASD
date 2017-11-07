@@ -96,6 +96,19 @@ class BinaryTreeTest {
         tree.remove(8)                //вершина без детей
         assertEquals(0, tree.size)
 
+
+        tree.add(10)
+        tree.add(5)
+        tree.add(20)
+        tree.add(19)
+        tree.add(17)
+        tree.add(18)
+        tree.remove(10)                 // случай, когда у min есть правый ребёнок
+        assertTrue(tree.checkInvariant())
+        assertFalse(tree.contains(10))
+        assertEquals(5,tree.size)
+        assertEquals(5, tree.first())
+        assertEquals(20, tree.last())
     }
 
 

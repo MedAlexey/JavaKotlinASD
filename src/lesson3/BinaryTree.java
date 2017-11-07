@@ -66,8 +66,8 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         @SuppressWarnings("unchecked")
         T removableValue = (T) o;
 
-        if (current.value == o){      //если удаляем вершину  /TODO пересмотреть
-           if (current.left == null && current.right == null) root = null;         
+        if (current.value == o){      //если удаляем вершину
+           if (current.left == null && current.right == null) root = null;
            else if (current.right == null) root = current.left;
            else if (current.left == null) root = current.right;
            else {
@@ -78,10 +78,10 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
                }
                else{
                    Node<T> min = premin.left;
+                   premin.left = min.right;
                    min.right = current.right;
                    min.left = current.left;
                    root = min;
-                   premin.left = null;
                }
            }
 
@@ -150,11 +150,12 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         else {
             Node<T> min = premin.left;
 
+            premin.left = min.right;
+
             min.left = removable.left;
             min.right = removable.right;
             current.left = current.left == removable ? min : current.left;
             current.right = current.right == removable ? min : current.right;
-            premin.left = null;
         }
 
     }
